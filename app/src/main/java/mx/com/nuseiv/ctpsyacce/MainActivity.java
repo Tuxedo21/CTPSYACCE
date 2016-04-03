@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<ImageView> ArrayOfHands = new ArrayList<>();
     ArrayList<ImageView> HouseHand = new ArrayList<>();
 
-      //      handOne,handTwo,handThree,handFour,handFive};
     //For Players Hands
     TextView  valueOne, valueTwo, valueThree,
             valueFour, valueFive, houseValue;
@@ -47,12 +46,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final int handOneBetTag = 1, handTwoBetTag = 2,
             handThreeBetTag = 3, handFourBetTag =4, handFiveBetTag =5;
 
+    // Must get these values from settings module
     private int betModValue = 10;
     private int walletValue = 2500;
 
       //SETUP CODE
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    //I belive this is done
     public void setupPlayerStats(){
         playerWallet = (TextView)findViewById(R.id.player_wallet);
         playerWallet.setText(player.getWallet() + "");
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerHand = (TextView)findViewById(R.id.what_hand);
     }
 
+    //This sould take in as many hands as the player states
     public void setupTextViews(){
         valueOne = (TextView)findViewById(R.id.valueOne);
         valueTwo = (TextView)findViewById(R.id.valueTwo);
@@ -105,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ArrayOfValues.add(valueFive);
     }
 
+    //this should mostly be a static setup
     public  void setupButtons(){
         dealBtn = (Button)findViewById(R.id.deal);
         showCountBtn = (Button)findViewById(R.id.show_count);
@@ -121,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lessBetBtn.setTag(lessTag);
     }
 
-    // Sets house and players imageViews, tags, and adds them to an arraylist
+    // Sets house and players imageViews, tags, and adds them to an array list
     public void setupImageViews(){
         handOne = (ImageView)findViewById(R.id.handOne);
         handOne.setTag(handOneTag);
