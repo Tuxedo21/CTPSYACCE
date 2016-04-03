@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
+           //TODO it looks like this can have some abstraction
             if (v.getTag() == handOneTag) { //handOneView
                 if (player.getHandSum(0) >= 21){
                     return false;
@@ -284,6 +285,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }return false;
     }
 
+    //// TODO: 4/3/16 get the menu & settings ready
     public void hitThisHand(int index) {
         playerHand.setText(index + 1 + ""); //Set UI witch hand
         player.addCardToAHand(shoe.getTopDeckCard(), index);
