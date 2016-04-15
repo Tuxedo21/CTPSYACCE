@@ -23,10 +23,6 @@ public class Player {
         this.wallet = wallet;
     }
 
-    //For House
-    public Player(){
-        this.setHandToEmpty(0);
-    }
 
             //BET METHODS
     public void setBetForHand(int index) {
@@ -94,12 +90,7 @@ public class Player {
         return handValues;
     }
 
-    public void setHandToEmpty(int hand){
-        Card genericCard = new Card(new int[] {0}, 0);
-        ArrayList<Card> genericArrayList = new ArrayList<>();
-        genericArrayList.add(genericCard);
-        handValues.add(hand, genericArrayList);
-    }
+
 
     public Integer getHandSum(int handNumber) {
         ArrayList<Card> hand = handValues.get(handNumber);

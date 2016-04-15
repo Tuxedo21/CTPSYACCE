@@ -17,8 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
+
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="mx.com.nuseiv.ctpsyacce.MainActivity"
         android:id="@+id/a"
@@ -27,30 +26,31 @@
         android:layout_alignParentStart="true">
 
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:id="@+id/linearLayout3"
             android:layout_alignTop="@+id/count"
             android:layout_alignLeft="@+id/textView8"
             android:layout_alignStart="@+id/textView8"
-            android:layout_marginLeft="55dp"
-            android:layout_marginStart="55dp"
             android:layout_toLeftOf="@+id/less"
-            android:layout_toStartOf="@+id/less">
+            android:layout_toStartOf="@+id/less"
+            android:layout_above="@+id/houseValue">
 
         <ImageView
             android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:src="@drawable/c10_of_clubs"
+            android:layout_height="match_parent"
+            android:src="@drawable/backofcard"
             android:id="@+id/house_left"
+            android:layout_weight="1"
             />
 
         <ImageView
             android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_height="match_parent"
             android:src="@drawable/c2_of_clubs"
             android:id="@+id/house_right"
+            android:layout_weight="1"
     />
         </LinearLayout>
 
@@ -120,47 +120,48 @@
             android:layout_height="75dp"
             android:layout_above="@+id/linearLayout"
             android:layout_centerHorizontal="true"
-            android:id="@+id/linearLayout2">
+            android:id="@+id/linearLayout2"
+            android:layout_below="@+id/textView8">
 
             <ImageView
                 android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_height="match_parent"
                 android:id="@+id/handOne"
                 android:layout_weight="1"
                 android:src="@drawable/ace_of_clubs"/>
 
             <ImageView
                 android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_height="match_parent"
                 android:id="@+id/handTwo"
                 android:layout_weight="1"
                 android:src="@drawable/queen_of_hearts2"
-                android:layout_gravity="bottom"/>
+                />
 
             <ImageView
                 android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_height="match_parent"
                 android:id="@+id/handThree"
                 android:layout_weight="1"
 
                 android:src="@drawable/queen_of_hearts2"
-                android:layout_gravity="bottom"/>
+                />
 
             <ImageView
                 android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_height="match_parent"
                 android:id="@+id/handFour"
                 android:layout_weight="1"
                 android:src="@drawable/queen_of_hearts2"
-                android:layout_gravity="bottom"/>
+                />
 
             <ImageView
                 android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_height="match_parent"
                 android:id="@+id/handFive"
                 android:layout_weight="1"
                 android:src="@drawable/king_of_clubs"
-                android:layout_gravity="bottom"/>
+                />
         </LinearLayout>
 
         <Button
@@ -231,7 +232,8 @@
             android:id="@+id/textView8"
             android:textColor="#ffffff"
             android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="15dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -251,7 +253,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="11"
             android:id="@+id/houseValue"
-            android:layout_below="@+id/linearLayout3"
+            android:layout_above="@+id/textView8"
             android:layout_centerHorizontal="true"/>
 
         <TextView

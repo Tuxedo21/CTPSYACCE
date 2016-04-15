@@ -15,13 +15,40 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
+/*  GAME PLAY
+*
+*  SET BETS
+*
+*   USE MORE AND LESS PER HAND
+*
+*  DEAL
+*   --FOR EVERY CARD DEALT MOD COUNT--
+*   TWO CARDS PER HAND, HAND OF HOUSE MUST BE ONE SHOWING ONE FACE DOWN
+*   CHECK FOR BLACKJACKS
+*   ASK FOR HAND
+*   GOTO: ASK FOR HAND
+*   HOUSE ASKS FOR HAND AND SHOWS FACE DOWN
+*
+*  CHECK HANDS AND EXCHANGE
+*
+*  COMPARE VALUES OF HANDS
+*  EXCHANGE THE AMOUNT BET
+*
+*  GOTO: SET BETS
+* */
+
+
 // if hand is busted subtract 1
 // if hand is less than house, subtract 1
 // if hand is more than house, add 1
 // if hand is bj and house is not, add 1.5
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener {
+
+    //Settings TODO this has to be set from another activity
+    Settings mSettings = new Settings(4,10,250,16);
+
 
     //For Players Hands
     ImageView handOne, handTwo, handThree, handFour,
@@ -46,20 +73,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final int handOneBetTag = 1, handTwoBetTag = 2,
             handThreeBetTag = 3, handFourBetTag =4, handFiveBetTag =5;
 
-    // Must get these values from settings module
-    private int betModValue = 10;
-    private int walletValue = 2500;
+    boolean doneWithBets = false;
+    boolean dealing = true;
+
 
       //SETUP CODE
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         house = new House();
-        player = new Player(walletValue);
+        player = new Player(mSettings.getPlayerWallet());
         setupImageViews(); //Card Views
         setupTextViews(); //Card sum Views
         setupButtons();
@@ -70,10 +96,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         shoe = new Shoe();
         Log.v("Deck", shoe.toString());
 
-
+        placeMinBets();
     }
 
-    //I belive this is done
+    //I believe this is done
     public void setupPlayerStats(){
         playerWallet = (TextView)findViewById(R.id.player_wallet);
         playerWallet.setText(player.getWallet() + "");
@@ -81,32 +107,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerHand = (TextView)findViewById(R.id.what_hand);
     }
 
-    //This sould take in as many hands as the player states
+    //This should take in as many hands as the player states, done
     public void setupTextViews(){
-        valueOne = (TextView)findViewById(R.id.valueOne);
-        valueTwo = (TextView)findViewById(R.id.valueTwo);
-        valueThree = (TextView)findViewById(R.id.valueThree);
-        valueFour = (TextView)findViewById(R.id.valueFour);
-        valueFive = (TextView)findViewById(R.id.valueFive);
+
+        int[] playerHandTextViewsIds = {R.id.valueOne, R.id.valueTwo,R.id.valueThree,R.id.valueFour,R.id.valueFive};
+        TextView[] playerHandTextViews = { valueOne,valueTwo,valueThree,valueFour,valueFive};
+        int[] playerHandTextViewsTags = { handOneBetTag,handTwoBetTag, handThreeBetTag, handFourBetTag, handFiveBetTag};
+
+        for (int i = 0; i < mSettings.getNumberOfHands(); i++){
+
+            playerHandTextViews[i] = (TextView)findViewById(playerHandTextViewsIds[i]);
+            playerHandTextViews[i].setTag(playerHandTextViewsTags[i]);
+            playerHandTextViews[i].setOnTouchListener(this);
+            ArrayOfValues.add(playerHandTextViews[i]);
+        }
+
         houseValue = (TextView)findViewById(R.id.houseValue);
 
-        valueOne.setTag(handOneBetTag);
-        valueTwo.setTag(handTwoBetTag);
-        valueThree.setTag(handThreeBetTag);
-        valueFour.setTag(handFourBetTag);
-        valueFive.setTag(handFiveBetTag);
-
-        valueOne.setOnTouchListener(this);
-        valueTwo.setOnTouchListener(this);
-        valueThree.setOnTouchListener(this);
-        valueFour.setOnTouchListener(this);
-        valueFive.setOnTouchListener(this);
-
-        ArrayOfValues.add(valueOne);
-        ArrayOfValues.add(valueTwo);
-        ArrayOfValues.add(valueThree);
-        ArrayOfValues.add(valueFour);
-        ArrayOfValues.add(valueFive);
     }
 
     //this should mostly be a static setup
@@ -128,54 +145,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // Sets house and players imageViews, tags, and adds them to an array list
     public void setupImageViews(){
-        handOne = (ImageView)findViewById(R.id.handOne);
-        handOne.setTag(handOneTag);
-        handTwo = (ImageView)findViewById(R.id.handTwo);
-        handTwo.setTag(handTwoTag);
-        handThree = (ImageView)findViewById(R.id.handThree);
-        handThree.setTag(handThreeTag);
-        handFour = (ImageView)findViewById(R.id.handFour);
-        handFour.setTag(handFourTag);
-        handFive = (ImageView)findViewById(R.id.handFive);
-        handFive.setTag(handFiveTag);
-        handOne.setImageResource(0);
-        handTwo.setImageResource(0);
-        handThree.setImageResource(0);
-        handFour.setImageResource(0);
-        handFive.setImageResource(0);
+
+        ImageView[] playerImageViews = {handOne, handTwo, handThree, handFour,handFive};
+        int[] playerImageViewsTags = {handOneTag, handTwoTag,handThreeTag, handFourTag, handFiveTag};
+        int[] playerImageViewsIds = {R.id.handOne, R.id.handTwo,R.id.handThree,R.id.handFour,R.id.handFive};
+
+        for (int i = 0; i < mSettings.getNumberOfHands(); i++){
+            playerImageViews[i] = (ImageView)findViewById(playerImageViewsIds[i]);
+            playerImageViews[i].setTag(playerImageViewsTags[i]); // can change this to an arithmetic operacion
+            playerImageViews[i].setImageResource(0);
+            playerImageViews[i].setOnTouchListener(this);
+            ArrayOfHands.add(playerImageViews[i]);
+        }
 
         handHouseOne = (ImageView)findViewById(R.id.house_left);
         handHouseTwo = (ImageView)findViewById(R.id.house_right);
         handHouseOne.setImageResource(0);
         handHouseTwo.setImageResource(0);
 
-        //On Touch
-        handOne.setOnTouchListener(this);
-        handTwo.setOnTouchListener(this);
-        handThree.setOnTouchListener(this);
-        handFour.setOnTouchListener(this);
-        handFive.setOnTouchListener(this);
-
-        ArrayOfHands.add(handOne);
-        ArrayOfHands.add(handTwo);
-        ArrayOfHands.add(handThree);
-        ArrayOfHands.add(handFour);
-        ArrayOfHands.add(handFive);
-
         HouseHand.add(handHouseOne);
        // HouseHand.add(handHouseTwo);
     }
-            //UI CODE
+
+
+
+    //UI CODE AND GAMEPLAY
     @Override
     public void onClick(View v) {
 
-        if (v.getTag() == dealTag){ //DEAL
+        //DEAL PART
+        if (v.getTag() == dealTag){
+            doneWithBets = true;
             player.setAllHandsToEmpty(true);
-            house.setHandToEmpty(0);
+            house.setHandToEmpty();
             Log.e("Dealing Cards", shoe.toString() + "");
             Toast.makeText(MainActivity.this,"Dealing",Toast.LENGTH_SHORT).show();
 
-            for (int i = 0; i < ArrayOfHands.size(); i++) {
+            for (int i = 0; i < mSettings.getNumberOfHands(); i++) {
                 player.addCardToAHand(shoe.getTopDeckCard(),i);
                 Log.e("Hand " + i + " Card x", shoe.getTopDeckCard() + "");
                 shoe.sendTopDeckCardToGrave();
@@ -187,90 +193,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             for (int i = 0; i < HouseHand.size(); i++) {
-                house.addCardToAHand(shoe.getTopDeckCard(),i);
+                house.addCardToAHand(shoe.getTopDeckCard());
                 Log.e("House Hand " + i + " Card x", shoe.getTopDeckCard() + "");
                 shoe.sendTopDeckCardToGrave();
-                house.addCardToAHand(shoe.getTopDeckCard(), i);
+                house.addCardToAHand(shoe.getTopDeckCard());
                 HouseHand.get(i).setBackgroundResource(shoe.getTopDeckCard().getFace());
                 Log.e("House Hand " + i + " Card x", shoe.getTopDeckCard() + "");
                 shoe.sendTopDeckCardToGrave();
-                houseValue.setText(house.getHandSum(i) + "");
+                houseValue.setText(house.getHandSum() + "");
                // Log.e("Full House Hand" + house.getHandValues());
             }
 
         }
+        //Less
+        else if (v.getTag() == lessTag) {
 
-        else if (v.getTag() == lessTag) {  //Less
-
-            if (player.getBetForHand() >= betModValue) {
-                player.modWallet(betModValue);   //mod hand
-                player.modBetForHand(-betModValue, player.getCurrentBet());
-                playerWallet.setText(player.getWallet() + "");
+            if (player.getBetForHand() - mSettings.getBetInc() >= mSettings.getBetInc()) {
+                player.modWallet(mSettings.getBetInc());   //mod wallet value
+                player.modBetForHand(-mSettings.getBetInc(), player.getCurrentBet()); // mod the bet of current hand
                 playerWallet.setText(player.getWallet() + "");
                 playerBet.setText("$"+ player.getBetForHand() + "");
                 player.setBetForHand(player.getCurrentBet());
             }else {
-                Toast.makeText(MainActivity.this,"No more money to take from hand", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"There is no more money to take from hand", Toast.LENGTH_SHORT).show();
             }
         }
-
-        else if (v.getTag() == moreTag){ //More
-            if (player.getWallet() - betModValue > 0){
-                player.modWallet(-betModValue);
-                player.modBetForHand(betModValue, player.getCurrentBet());
-                playerWallet.setText(player.getWallet() + "");
-                playerBet.setText("$"+ player.getBetForHand() + "");
-                player.setBetForHand(player.getCurrentBet());
-            }
+        //More
+        else if (v.getTag() == moreTag){
+            addOneBetUnit();
         }
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-           //TODO it looks like this can have some abstraction
-            if (v.getTag() == handOneTag) { //handOneView
-                if (player.getHandSum(0) >= 21){
-                    return false;
-                }
-                playerHand.setText("1");
-                player.addCardToAHand(shoe.getTopDeckCard(), 0);
-                handOne.setBackgroundResource(shoe.getTopDeckCard().getFace());
-                shoe.sendTopDeckCardToGrave();
-                valueOne.setText(player.getHandSum(0).toString());
+           //TODO add that you cant add cards to hand 4 if you have add to hand 2
 
-            }
-            else if (v.getTag() == handTwoTag){
-                if (player.getHandSum(1) >= 21){
+
+            if (doneWithBets && (v.getTag() == handOneTag || v.getTag() == handTwoTag || v.getTag() == handThreeTag ||
+                    v.getTag() == handFourTag || v.getTag() == handFiveTag)) { //handOneView
+                if (player.getHandSum((int)v.getTag() - 11) >= 21){
                     return false;
                 }
-                playerHand.setText("2");
-                player.addCardToAHand(shoe.getTopDeckCard(), 1);
-                handTwo.setBackgroundResource(shoe.getTopDeckCard().getFace());
-                shoe.sendTopDeckCardToGrave();
-                valueTwo.setText(player.getHandSum(1) + "");
-            }
-            else if (v.getTag() == handThreeTag){
-                if (player.getHandSum(2) >= 21){
-                    return false;
-                }
-                playerHand.setText("3");
-                player.addCardToAHand(shoe.getTopDeckCard(), 2);
-                handThree.setBackgroundResource(shoe.getTopDeckCard().getFace());
-                shoe.sendTopDeckCardToGrave();
-                valueThree.setText(player.getHandSum(2) + "");
-            }
-            else if (v.getTag() == handFourTag){
-                if (player.getHandSum(3) >= 21){
-                    return false;
-                }
-                hitThisHand(3);
-            }
-            else if (v.getTag() == handFiveTag){
-                if (player.getHandSum(4) >= 21){
-                    return false;
-                }
-                hitThisHand(4);
+                hitThisHand(((int)v.getTag() - 11));
             }
 
             else if (v.getTag() == handOneBetTag || v.getTag() == handTwoBetTag ||
@@ -282,8 +247,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 player.setCurrentBet(i);
                 playerBet.setText("$" + player.getBetForHand() + "");
                 Log.e("Current Hand", player.getCurrentHand() + "");
-            }return false;
+            }
+        return false;
     }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return false;
+    }
+
+
 
     //// TODO: 4/3/16 get the menu & settings ready
     public void hitThisHand(int index) {
@@ -293,17 +266,69 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         shoe.sendTopDeckCardToGrave();
         ArrayOfValues.get(index).setText(player.getHandSum(index) + ""); //Set UI hand value
         player.setCurrentBet(index);
-
-        playerBet.setText("$"+ player.getBetForHand() + ""); //Set UI bet for hand
+        playerBet.setText("$" + player.getBetForHand() + ""); //Set UI bet for hand
     }
+
+    //TODO house self deal
+    public void HouseSelfDeal(){
+        //flipcard
+
+        houseValue.setText(house.getHandSum() + "");
+
+        if(house.getHandSum() < mSettings.getHouseBetStop()){
+            //hithouse
+        }
+
+        exchangeCash();
+
+    }
+
+    public void exchangeCash(){
+
+        //Compare values of hands to house
+        //do transactions
+        clearTable();
+    }
+
+    public void clearTable(){
+        //set everything to 0
+        //and let player set bets
+        placeMinBets();
+    }
+
+    public void placeMinBets() {
+        for(int i =0 ; i < mSettings.getNumberOfHands(); i++){
+
+            player.setCurrentBet(i);
+
+            addOneBetUnit();
+
+
+        }
+    }
+
+    public void addOneBetUnit(){
+
+        if (player.getWallet() - mSettings.getBetInc() > 0){
+            player.modWallet(-mSettings.getBetInc());
+            player.modBetForHand(mSettings.getBetInc(), player.getCurrentBet());
+            playerWallet.setText(player.getWallet() + "");
+            playerBet.setText("$"+ player.getBetForHand() + "");
+            player.setBetForHand(player.getCurrentBet());
+        } else{
+            Toast.makeText(MainActivity.this,"You don't have enough money",Toast.LENGTH_LONG);
+        }
+
+    }
+
 
     //MENU CODE
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-getMenuInflater().inflate(R.menu.menu_main, menu);
-return true;
-}
+    getMenuInflater().inflate(R.menu.menu_main, menu);
+    return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -313,10 +338,9 @@ return true;
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.new_game) {
             Toast.makeText(MainActivity.this,"Going to settings",Toast.LENGTH_SHORT).show();
-            //Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-            //  startActivity(settingsIntent);
+            finish();
             return true;
         }
 
@@ -324,6 +348,18 @@ return true;
 
             Toast.makeText(MainActivity.this,"Going to Scores",Toast.LENGTH_SHORT).show();
             return true;
+        }
+
+        else if (id == R.id.set_house){
+
+            Toast.makeText(MainActivity.this,"Player",Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        else if (id == R.id.set_house){
+            Toast.makeText(MainActivity.this,"House",Toast.LENGTH_SHORT).show();
+            return true;
+
         }
 
         return super.onOptionsItemSelected(item);
