@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="23"
+                android:text="--"
                 android:gravity="center"
                 android:id="@+id/valueOne"
                 android:layout_weight="1"
@@ -77,7 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="21"
+                android:text="--"
                 android:gravity="center"
                 android:id="@+id/valueTwo"
                 android:layout_weight="1"
@@ -87,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="12"
+                android:text="--"
                 android:gravity="center"
                 android:id="@+id/valueThree"
                 android:layout_weight="1"
@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="34"
+                android:text="--"
                 android:id="@+id/valueFour"
                 android:gravity="center"
                 android:layout_weight="1"
@@ -107,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="10"
+                android:text="--"
                 android:gravity="center"
                 android:id="@+id/valueFive"
                 android:layout_weight="1"
@@ -135,7 +135,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/handTwo"
                 android:layout_weight="1"
-                android:src="@drawable/queen_of_hearts2"
+                android:src="@android:drawable/ic_delete"
                 />
 
             <ImageView
@@ -144,7 +144,7 @@
                 android:id="@+id/handThree"
                 android:layout_weight="1"
 
-                android:src="@drawable/queen_of_hearts2"
+                android:src="@android:drawable/ic_delete"
                 />
 
             <ImageView
@@ -152,7 +152,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/handFour"
                 android:layout_weight="1"
-                android:src="@drawable/queen_of_hearts2"
+                android:src="@android:drawable/ic_delete"
                 />
 
             <ImageView
@@ -160,7 +160,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/handFive"
                 android:layout_weight="1"
-                android:src="@drawable/king_of_clubs"
+                android:src="@android:drawable/ic_delete"
                 />
         </LinearLayout>
 
@@ -200,7 +200,8 @@
             android:id="@+id/less"
             android:layout_below="@+id/textView2"
             android:layout_toLeftOf="@+id/more"
-            android:layout_toStartOf="@+id/more"/>
+            android:layout_alignLeft="@+id/textView6"
+            android:layout_alignStart="@+id/textView6"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -244,8 +245,8 @@
             android:textColor="#ffffff"
             android:textSize="30dp"
             android:layout_above="@+id/textView2"
-            android:layout_toRightOf="@+id/show_count"
-            android:layout_toEndOf="@+id/show_count"/>
+            android:layout_alignRight="@+id/done_btn"
+            android:layout_alignEnd="@+id/done_btn"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -295,6 +296,15 @@
             android:layout_above="@+id/more"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Done"
+            android:id="@+id/done_btn"
+            android:layout_below="@+id/show_count"
+            android:layout_toRightOf="@+id/show_count"
+            android:layout_toEndOf="@+id/show_count"/>
 
 
     </RelativeLayout>

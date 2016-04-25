@@ -7,10 +7,17 @@
 
     <item
         android:id="@+id/new_game"
-        android:orderInCategory="100"
+        android:orderInCategory="90"
         android:title="New Game"
         app:showAsAction="ifRoom"
-        android:icon="@android:drawable/ic_menu_add"/>
+        android:icon="@android:drawable/btn_star_big_on"/>
+
+    <item
+        android:id="@+id/exit"
+        android:orderInCategory="110"
+        android:title="Exit"
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"/>
 
     <!-- activity with SQLite and stats-->
 
@@ -18,7 +25,8 @@
         android:id="@+id/see_score"
         android:orderInCategory="101"
         android:title="@string/action_score"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_sort_by_size"/>
 
     <!-- wallet, min bet, number of hands, background color
     card face-->
@@ -27,6 +35,8 @@
         android:id="@+id/set_player"
         android:orderInCategory="102"
         android:title="Player Settings"
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_myplaces"/>
         />
 
     <!-- house must stop on this number-->
@@ -35,6 +45,8 @@
         android:id="@+id/set_house"
         android:orderInCategory="103"
         android:title="House Settings"
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_compass"
         />
 
 

@@ -43,11 +43,12 @@ import java.util.ArrayList;
 // if hand is more than house, add 1
 // if hand is bj and house is not, add 1.5
 
-
+//Gameplay Activity
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, View.OnLongClickListener {
 
-    //Settings TODO this has to be set from another activity
-    Settings mSettings = new Settings(4,10,250,16);
+    //Settings
+    //TODO this has to be set from another activity
+    Settings mSettings = new Settings(4,10,1000,16);
 
 
     //For Players Hands
@@ -65,9 +66,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         House house;
         Player player;
         TextView playerWallet, playerBet, playerHand;
-    Button dealBtn,showCountBtn,moreBetBtn,lessBetBtn;
+    Button dealBtn,showCountBtn,moreBetBtn,lessBetBtn, doneBtn;
 
-    final int dealTag = 20, lessTag = 21, moreTag =22;
+    final int dealTag = 20, lessTag = 21, moreTag =22, doneTag = 23;
     final int handOneTag = 11, handTwoTag = 12,
             handThreeTag = 13, handFourTag =14, handFiveTag =15;
     final int handOneBetTag = 1, handTwoBetTag = 2,
@@ -83,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //TODO GO TO SETTINGS ON NEW GAME!
 
         house = new House();
         player = new Player(mSettings.getPlayerWallet());
@@ -132,7 +135,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         showCountBtn = (Button)findViewById(R.id.show_count);
         moreBetBtn = (Button)findViewById(R.id.more);
         lessBetBtn = (Button)findViewById(R.id.less);
+        doneBtn = (Button)findViewById(R.id.done_btn);
 
+        doneBtn.setOnClickListener(this);
         dealBtn.setOnClickListener(this);
         showCountBtn.setOnClickListener(this);
         moreBetBtn.setOnClickListener(this);
@@ -141,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dealBtn.setTag(dealTag);
         moreBetBtn.setTag(moreTag);
         lessBetBtn.setTag(lessTag);
+        doneBtn.setTag(doneTag);
     }
 
     // Sets house and players imageViews, tags, and adds them to an array list
@@ -168,42 +174,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     //UI CODE AND GAMEPLAY
     @Override
     public void onClick(View v) {
 
         //DEAL PART
         if (v.getTag() == dealTag){
-            doneWithBets = true;
+            playerWallet.setText(player.getWallet()+"");
+            //doneWithBets = true;
             player.setAllHandsToEmpty(true);
             house.setHandToEmpty();
             Log.e("Dealing Cards", shoe.toString() + "");
             Toast.makeText(MainActivity.this,"Dealing",Toast.LENGTH_SHORT).show();
-
-            for (int i = 0; i < mSettings.getNumberOfHands(); i++) {
-                player.addCardToAHand(shoe.getTopDeckCard(),i);
-                Log.e("Hand " + i + " Card x", shoe.getTopDeckCard() + "");
-                shoe.sendTopDeckCardToGrave();
-                player.addCardToAHand(shoe.getTopDeckCard(), i);
-                Log.e("Hand " + i + " Card x", shoe.getTopDeckCard() + "");
-                ArrayOfHands.get(i).setBackgroundResource(shoe.getTopDeckCard().getFace());
-                shoe.sendTopDeckCardToGrave();
-                ArrayOfValues.get(i).setText(player.getHandSum(i) + "");
-            }
-
-            for (int i = 0; i < HouseHand.size(); i++) {
-                house.addCardToAHand(shoe.getTopDeckCard());
-                Log.e("House Hand " + i + " Card x", shoe.getTopDeckCard() + "");
-                shoe.sendTopDeckCardToGrave();
-                house.addCardToAHand(shoe.getTopDeckCard());
-                HouseHand.get(i).setBackgroundResource(shoe.getTopDeckCard().getFace());
-                Log.e("House Hand " + i + " Card x", shoe.getTopDeckCard() + "");
-                shoe.sendTopDeckCardToGrave();
-                houseValue.setText(house.getHandSum() + "");
-               // Log.e("Full House Hand" + house.getHandValues());
-            }
-
+               dealToPlayer();
+               dealToHouse();
+               dealToPlayer();
+               dealToHouse();
         }
         //Less
         else if (v.getTag() == lessTag) {
@@ -222,6 +208,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else if (v.getTag() == moreTag){
             addOneBetUnit();
         }
+        // Done with this hand(play)
+        else if (v.getTag() == doneTag){
+            HouseSelfDeal();
+            exchangeCash();
+        }
+    }
+
+    // Deals one card to each hand of the player
+    public void dealToPlayer(){
+
+        for (int i = 0; i < mSettings.getNumberOfHands(); i++) {
+            player.addCardToAHand(shoe.getTopDeckCard(), i);
+            Log.e("Hand " + i + " Card x", shoe.getTopDeckCard() + "");
+            ArrayOfHands.get(i).setBackgroundResource(shoe.getTopDeckCard().getFace());
+            shoe.sendTopDeckCardToGrave();
+            ArrayOfValues.get(i).setText(player.getHandSum(i) + "");
+        }
+
+    }
+
+    // Deals one card to the hand of the house
+    public void dealToHouse(){
+        for (int i = 0; i < HouseHand.size(); i++) {
+            house.addCardToAHand(shoe.getTopDeckCard());
+            HouseHand.get(i).setBackgroundResource(shoe.getTopDeckCard().getFace());
+            Log.e("House Hand " + i + " Card x", shoe.getTopDeckCard() + "");
+            shoe.sendTopDeckCardToGrave();
+            houseValue.setText(house.getHandSum() + "");
+        }
     }
 
     @Override
@@ -229,9 +244,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
            //TODO add that you cant add cards to hand 4 if you have add to hand 2
 
-
-            if (doneWithBets && (v.getTag() == handOneTag || v.getTag() == handTwoTag || v.getTag() == handThreeTag ||
-                    v.getTag() == handFourTag || v.getTag() == handFiveTag)) { //handOneView
+            if ( v.getTag() == handOneTag || v.getTag() == handTwoTag || v.getTag() == handThreeTag ||
+                    v.getTag() == handFourTag || v.getTag() == handFiveTag) { //handOneView
                 if (player.getHandSum((int)v.getTag() - 11) >= 21){
                     return false;
                 }
@@ -269,24 +283,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerBet.setText("$" + player.getBetForHand() + ""); //Set UI bet for hand
     }
 
-    //TODO house self deal
+    //TODO flip card
     public void HouseSelfDeal(){
-        //flipcard
 
-        houseValue.setText(house.getHandSum() + "");
-
-        if(house.getHandSum() < mSettings.getHouseBetStop()){
-            //hithouse
+        while(house.getHandSum() <= mSettings.getHouseBetStop()){
+            dealToHouse();
         }
-
-        exchangeCash();
-
+        //TODO this might not work!!
+        if(house.getHandSum() > 21){
+            house.setHandToEmpty();
+        }
     }
 
     public void exchangeCash(){
 
-        //Compare values of hands to house
-        //do transactions
+        //ListOfInt (PlayerHands) Int(HouseHandValue) -> ListOfBool
+        // takes hands of player and compares to hand of house, pays to the winner
+
+        for (int i = 0; i < mSettings.getNumberOfHands(); i++){
+            player.setCurrentHand(i);
+            if(player.getHandSum(i) > house.getHandSum() && player.getHandSum(i) <= 21){
+                player.modWallet(player.getBetForHand());
+                Log.d("Paying", player.getBetForHand().toString());
+            }
+            else if(player.getHandSum(i) == house.getHandSum()){
+                Toast.makeText(MainActivity.this,"There is a tie on hand " + (i+1),Toast.LENGTH_SHORT).show();
+            }
+            else {
+                player.modWallet(-player.getBetForHand());
+                Log.d("Paying", "-" +  player.getBetForHand().toString());
+            }
+        }
+        playerWallet.setText(player.getWallet()+"");
+        Log.d("Done paying", player.getWallet()+"");
         clearTable();
     }
 
@@ -298,12 +327,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void placeMinBets() {
         for(int i =0 ; i < mSettings.getNumberOfHands(); i++){
-
             player.setCurrentBet(i);
-
+            player.modBetForHand(-player.getBetForHand() ,i); //resets the hand bet to zero
             addOneBetUnit();
-
-
         }
     }
 
@@ -320,7 +346,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-
 
     //MENU CODE
     @Override
@@ -339,31 +364,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.new_game) {
-            Toast.makeText(MainActivity.this,"Going to settings",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"New Game! CIC",Toast.LENGTH_SHORT).show();
+
+            return true;
+        }
+
+        else if (id == R.id.exit){
+
             finish();
             return true;
         }
 
         else if (id == R.id.see_score){
 
-            Toast.makeText(MainActivity.this,"Going to Scores",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"Going to Scores CIC",Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        else if (id == R.id.set_player){
+
+            Toast.makeText(MainActivity.this,"Player CIC",Toast.LENGTH_SHORT).show();
             return true;
         }
 
         else if (id == R.id.set_house){
-
-            Toast.makeText(MainActivity.this,"Player",Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        else if (id == R.id.set_house){
-            Toast.makeText(MainActivity.this,"House",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"House CIC",Toast.LENGTH_SHORT).show();
             return true;
 
         }
 
         return super.onOptionsItemSelected(item);
     }
-
 
 }

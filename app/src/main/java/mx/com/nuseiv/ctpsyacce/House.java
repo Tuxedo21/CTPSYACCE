@@ -18,8 +18,7 @@ public class House {
     }
 
     public void setHandToEmpty(){
-        Card genericCard = new Card(new int[] {0}, 0);
-        HouseValues.add(genericCard);
+        HouseValues.clear();
     }
 
     public void addCardToAHand(Card card){
